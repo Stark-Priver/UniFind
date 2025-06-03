@@ -1,8 +1,17 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "../ui/button";
+import { useAuth } from "../../context/AuthContext";
 
 export const Navbar = (): JSX.Element => {
+  const { isAuthenticated, user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
+
   const navItems = [
     { label: "Report Lost Item", href: "/report-lost-item" },
     { label: "Search Found Items", href: "/found-items" },
@@ -30,11 +39,27 @@ export const Navbar = (): JSX.Element => {
           ))}
         </nav>
 
-        <Link to="/login">
-          <Button className="h-10 px-4 py-0 bg-[#1670d3] text-[#f7f9fc] font-bold text-sm rounded-lg">
-            Login / Register
-          </Button>
-        </Link>
+        {isAuthenticated ? (
+          <div className="flex items-center gap-4">
+            <Link to="/dashboard">
+              <Button variant="outline" className="h-10">
+                Dashboard
+              </Button>
+            </Link>
+            <Button 
+              onClick={handleLogout}
+              className="h-10 px-4 py-0 bg-[#1670d3] text-[#f7f9fc] font-bold text-sm rounded-lg"
+            >
+              Logout
+            </Button>
+          </div>
+        ) : (
+          <Link to="/login">
+            <Button className="h-10 px-4 py-0 bg-[#1670d3] text-[#f7f9fc] font-bold text-sm rounded-lg">
+              Login / Register
+            </Button>
+          </Link>
+        )}
       </div>
     </header>
   );
